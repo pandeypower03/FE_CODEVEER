@@ -13,6 +13,11 @@ import {
   Play
 } from 'lucide-react';
 
+const handleClick = () => {
+  localStorage.removeItem('token');
+  window.location.href = '/login'; // Redirect to login page
+}
+
 export default function Dashboard() {
   const [stats, setStats] = useState({
     problemsSolved: 47,
@@ -318,6 +323,9 @@ export default function Dashboard() {
               </p>
             </div>
           </Link>
+             <button onClick={handleClick}>
+        Logout
+      </button>
         </div>
       </div>
     </div>

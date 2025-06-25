@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Login     from './features/auth/Login';
-import Signup    from './features/auth/Signup';
-import Dashboard from './features/pages/Dashboard';
+import Login     from './components/Login';
+import Signup    from './components/Signup';
+import Dashboard from './components/Dashboard';
+import './index.css'  
 
 function App() {
   // 1️⃣ keep the auth flag in state
