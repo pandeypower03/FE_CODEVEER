@@ -3,7 +3,7 @@ import { AuthContext } from './AuthProvider.jsx';
 import { Link , useNavigate} from 'react-router-dom';
 
 export default function Signup() {
-  const [name, setName] = useState('');
+  const [username, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const {user, signup, error} =useContext(AuthContext);
@@ -11,7 +11,7 @@ export default function Signup() {
 
 function handleSignup(e) {
   e.preventDefault();
-  signup({ name, email, password });
+  signup({ username, email, password });
 };
  
 
@@ -30,7 +30,7 @@ function handleSignup(e) {
           Name
           <input 
             type="text" 
-            value={name} 
+            value={username} 
             onChange={e => setName(e.target.value)} 
             required 
           />

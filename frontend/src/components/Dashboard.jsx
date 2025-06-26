@@ -7,15 +7,22 @@ const Dashboard = () => {
  const { user,logout } =useContext(AuthContext)
   const navigate = useNavigate();
 
+  
+
   const handlelogout=()=>{
   logout();
   navigate('/')
 }
+console.log(user)
+const parseduser= JSON.parse(user)
+console.log(parseduser)
 
   return (
    <> 
    <p>  hello iam dashboard</p>
-   <p>{user.email}</p>
+   
+   {user && 
+   <p>{parseduser.username}</p>}
    <button onClick={handlelogout}>Log Out</button>
   
 

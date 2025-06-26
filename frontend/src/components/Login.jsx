@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 
 export default function Login() {
-  const [name, setName] = useState('');
+  const [username, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const {user ,login, error} =useContext(AuthContext);
@@ -13,7 +13,7 @@ export default function Login() {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    login({ name, email, password });
+    login({ username, email, password });
   }
 
   useEffect(()=>{
@@ -32,7 +32,7 @@ export default function Login() {
           Username
           <input 
             type="username" 
-            value={name} 
+            value={username} 
             onChange={e => setName(e.target.value)} 
             required 
           />

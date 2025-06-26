@@ -2,48 +2,62 @@
 //parse means convert Takes a JSON-formatted string and parses it back into the corresponding JavaScript value (object, array, number, etc.)
 // Takes a JavaScript value (object, array, number, etc.) and returns a JSON-formatted string
 // 1. Define your key as a string constant
-const CURRENT_USER = "CURRENT_USER";
+import axios from 'axios';
+const API_BASE = 'http://localhost:5000/users';  
+const TOKEN_KEY = 'AUTH_TOKEN';  
 
 // 2. Named export for signup
-export function userSignup({ name, password, email }) {
-  const users = JSON.parse(localStorage.getItem("users") || "[]");
+export async function userSignup({ username, email, password }) {
+  try {
+    const resp = await axios.post(`${API_BASE}/`, {
+      username,
+      email,
+      password
+    });
+    // API returns { message, user: { … }, token }
+    const { user, token } = resp.data;
 
-  // check for existing user
-  if (users.some(u => u.name === name)) {
-    console.log("user already exists");
+    // store the JWT
+    
+    localStorage.setItem(TOKEN_KEY, token);
+    localStorage.setItem('USER', JSON.stringify(user));
+
+
+    // return the user object so components can use it
+    return user;
+  } catch (err) {
+    console.error('Signup failed:', err.response?.data || err);
     return false;
   }
-
-  // add new user
-  users.push({ name, password, email });
-  localStorage.setItem("users", JSON.stringify(users));
-
-  // store current user email
-  localStorage.setItem(CURRENT_USER, email);
-  return true;
 }
 
-// 3. Named export for login
-export function userLogin({ name, password, email }) {
-  const users = JSON.parse(localStorage.getItem("users") || "[]");
-  const user  = users.find(u => u.email === email);
+// 2️⃣ Login against your real API
+export async function userLogin({ username,email, password }) {
+  try {
+    const resp = await axios.post(`${API_BASE}/login`, { username,email, password });
+    const { user, token } = resp.data;
 
-  if (user && user.password === password) {
-    // store current user email
-    localStorage.setItem(CURRENT_USER, email);
+    localStorage.setItem(TOKEN_KEY, token);
+    localStorage.setItem('USER', JSON.stringify(user));
     return user;
+  } catch (err) {
+    console.error('Login failed:', err.response?.data || err);
+    return false;
   }
-
-  console.log("Invalid credentials");
-  return false;
 }
 
-export function userLogout(){
-  localStorage.removeItem(CURRENT_USER)
+// 3️⃣ Logout clears the token
+export function userLogout() {
+  localStorage.removeItem(TOKEN_KEY);
+  console.log('USER')
+  localStorage.removeItem('USER');
 }
 
-
-// 4. Named export for checkLogin
+// 4️⃣ checkLogin returns the token (or null)
 export function checkLogin() {
-  return localStorage.getItem(CURRENT_USER);
+  const token = localStorage.getItem(TOKEN_KEY);
+  const user = localStorage.getItem('USER');
+  
+
+  return { token, user };
 }
