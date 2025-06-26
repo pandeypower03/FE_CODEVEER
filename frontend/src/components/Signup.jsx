@@ -1,41 +1,31 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import React, { useContext, useState, useEffect } from 'react';
+import { AuthContext } from './AuthProvider.jsx';
+import { Link , useNavigate} from 'react-router-dom';
 
 export default function Signup() {
-  const [name, setName]       = useState('');
-  const [email, setEmail]     = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError]     = useState('');
+  const {user, signup, error} =useContext(AuthContext);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
+function handleSignup(e) {
+  e.preventDefault();
+  signup({ name, email, password });
+};
+ 
 
-    try {
-      await axios.post('http://localhost:5000/users/', {
-        name,
-        email,
-        password
-      });
-      // after successful signup, redirect to login
-      navigate('/login');
-    } catch (err) {
-      console.error(err);
-      setError(
-        err.response?.data?.message 
-          || 'Signup failed. Please try again.'
-      );
+  useEffect(()=>{
+    if(user){
+      navigate('/dashboard/')
     }
-  };
+  },[user, navigate])
+  
 
-  return (
-    <div className="auth-form">
-      <h2>Sign Up</h2>
-      {error && <p className="error">{error}</p>}
+  
 
-      <form onSubmit={handleSubmit}>
+  return(
+   <form onSubmit={handleSignup}>
         <label>
           Name
           <input 
@@ -65,14 +55,12 @@ export default function Signup() {
             required 
           />
         </label>
-
+        {error && <p className="error">{error}</p>}
         <button type="submit">Sign Up</button>
+         <Link to ="/" className="link">
+        Already have an account? Login</Link>
       </form>
-
-      <p>
-        Already have an account? <Link to="/login">Log in</Link>
-      </p>
-    </div>
-  );
+      
+  )
 }
 

@@ -1,35 +1,27 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
 
-export default function Login({ onLogin }) {
-  const [username, setUsername] = useState('');
-  const [email,    setEmail]    = useState('');
+import React, { useContext, useState ,useEffect} from 'react';
+import { AuthContext } from './AuthProvider.jsx';
+import { Link, useNavigate } from 'react-router-dom';
+
+
+export default function Login() {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error,    setError]    = useState('');
+  const {user ,login, error} =useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSubmit = async e => {
     e.preventDefault();
-    setError('');
+    login({ name, email, password });
+  }
 
-    try {
-      const { data } = await axios.post('http://localhost:5000/users/login', {
-        username, email, password
-      });
-
-      if (data.token) {
-        localStorage.setItem('token', data.token);
-        onLogin();        // 🔥 notify App that we’re now logged in
-        navigate('/');    // 🚪 go to Dashboard
-      } else {
-        setError('No token returned');
-        localStorage.removeItem('token');
-      }
-    } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
+  useEffect(()=>{
+    if(user){
+      navigate('/dashboard/')
     }
-  };
+  },[user,navigate])
+  
 
   return (
     <div className="auth-form">
@@ -40,8 +32,8 @@ export default function Login({ onLogin }) {
           Username
           <input 
             type="username" 
-            value={username} 
-            onChange={e => setUsername(e.target.value)} 
+            value={name} 
+            onChange={e => setName(e.target.value)} 
             required 
           />
         </label>
@@ -66,9 +58,8 @@ export default function Login({ onLogin }) {
         </label>
         <button type="submit">Log In</button>
       </form>
-      <p>
-        Don’t have an account? <Link to="/signup">Sign up</Link>
-      </p>
+     <Link to ="/signup" className="link">
+        Don't have an account? Sign Up</Link>
     </div>
   );
 }
