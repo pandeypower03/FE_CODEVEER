@@ -4,25 +4,31 @@ import { AuthContext } from "./AuthProvider";
 
 
 const Dashboard = () => {
- const { user,logout } =useContext(AuthContext)
-  const navigate = useNavigate();
-
   
+ const { user,logout } =useContext(AuthContext)
+//  let parsedUser =
+//   typeof user === 'string'
+//     ? JSON.parse(user)
+//     : (typeof user === 'object' && user !== null)
+//     ? user
+//     : {};
 
+ 
+  const navigate = useNavigate();
+  console.log(user)
+  console.log(typeof(user))
+  
   const handlelogout=()=>{
   logout();
   navigate('/')
 }
-console.log(user)
-const parseduser= JSON.parse(user)
-console.log(parseduser)
 
   return (
    <> 
    <p>  hello iam dashboard</p>
    
    {user && 
-   <p>{parseduser.username}</p>}
+   <p>{user.username}</p>}
    <button onClick={handlelogout}>Log Out</button>
   
 

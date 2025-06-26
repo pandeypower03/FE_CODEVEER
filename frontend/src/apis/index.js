@@ -16,6 +16,7 @@ export async function userSignup({ username, email, password }) {
     });
     // API returns { message, user: { … }, token }
     const { user, token } = resp.data;
+    console.log(user)
 
     // store the JWT
     
@@ -49,15 +50,24 @@ export async function userLogin({ username,email, password }) {
 // 3️⃣ Logout clears the token
 export function userLogout() {
   localStorage.removeItem(TOKEN_KEY);
-  console.log('USER')
   localStorage.removeItem('USER');
 }
 
 // 4️⃣ checkLogin returns the token (or null)
 export function checkLogin() {
-  const token = localStorage.getItem(TOKEN_KEY);
-  const user = localStorage.getItem('USER');
-  
+  const token   = localStorage.getItem(TOKEN_KEY);
+  const rawUser = localStorage.getItem('USER'); // make sure this matches exactly where you .setItem()
+
+  let user = null;
+  if (rawUser) {
+    try {
+      user = JSON.parse(rawUser);
+    } catch (e) {
+      console.warn('Couldn’t parse USER from localStorage:', rawUser, e);
+      // fallback: leave user === null
+    }
+  }
 
   return { token, user };
 }
+
