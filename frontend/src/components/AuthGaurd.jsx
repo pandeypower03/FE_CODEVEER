@@ -1,4 +1,4 @@
-import React, { useEffect , useContext } from "react";
+import React, { useEffect  } from "react";
 
 import { Outlet } from "react-router-dom";
 import { AuthContext } from "./AuthProvider";
@@ -10,12 +10,12 @@ import {checkLogin} from '../apis';
 //if not authenticated, redirect to login page  
 
 const AuthGaurd = () => {
-    const { user } = useContext(AuthContext);
+    // const { user } = useContext(AuthContext);
     const navigate = useNavigate();
 
     useEffect(()=>{
-        const email = checkLogin();
-        if(!email){
+        const { token, user } = checkLogin();
+        if(!token || !user){
             navigate('/')
         }
     }

@@ -1,7 +1,7 @@
 import React, {useContext} from "react";
 import {  useNavigate } from 'react-router-dom';
 import { AuthContext } from "./AuthProvider";
-
+import  Solve  from "./Solve";
 
 const Dashboard = () => {
   
@@ -21,18 +21,23 @@ const Dashboard = () => {
   const handlelogout=()=>{
   logout();
   navigate('/')
-}
+  }
+  const movetosolve = () => {
+    navigate("/dashboard/solve/");
+  }
+  const movetolist = () => {
+    navigate("/dashboard/list/");
+  };
 
   return (
-   <> 
-   <p>  hello iam dashboard</p>
-   
-   {user && 
-   <p>{user.username}</p>}
-   <button onClick={handlelogout}>Log Out</button>
-  
+    <>
+      <p> hello iam dashboard</p>
 
-   </>
+      {user && <p>{user.username}</p>}
+      <button onClick={handlelogout}>Log Out</button>
+      <button onClick={movetosolve}>Solve Problems</button>
+      <button onClick={movetolist}>list Problems</button>
+    </>
   );
 };
 
