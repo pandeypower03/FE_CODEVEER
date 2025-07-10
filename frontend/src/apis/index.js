@@ -54,6 +54,9 @@ export async function userLogin({ username,email, password }) {
 export function userLogout() {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem('USER');
+  if (localStorage.getItem("PROBLEM_LIST")) {
+    localStorage.removeItem("PROBLEM_LIST");
+  }
   if (localStorage.getItem("current_problem_id")) {
     localStorage.removeItem("current_problem_id");
   }
@@ -78,24 +81,48 @@ export function checkLogin() {
 }
 
 //i want to store the porblem_id in local storage when the user clicks on the problem
-export async function handleProblemClick(problemId) {
+export async function getproblembyidAPI(problemId) {
   try {
+    const user = JSON.parse(localStorage.getItem("USER"));
+    const token = localStorage.getItem("AUTH_TOKEN");
+// console.log(user,token)
+    if (!user || !user.user_id || !token) {
+      console.error("User not logged in or token not found");
+      return { success: false, message: "Authentication failed" };
+    }
+
     if (!problemId) {
       console.error("No problem ID provided.");
-      return;
+      return { success: false, message: "No problem ID provided." };
     }
-//axios call
-    const response = await axios.get(`${API_BASE}/problems/${problemId}`);
 
-    if (response.status === 200) {
-      console.log("Problem fetched:", response.data);
-      localStorage.setItem("current_problem_id", JSON.stringify(problemId));
+    const url = `${API_BASE}/problems/${problemId}`;
+    console.log("URL:", url);
+    console.log("Authorization:", `Bearer ${token}`);
+    console.log("Problem ID:", problemId);
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    
+    if (!response.ok) {
+      console.error("Failed to fetch problem:", response.status);
+      return { success: false, message: `HTTP error: ${response.status}` };
     }
-    else {
-      console.error("Problem not found or failed to fetch.");
-    }
+
+    const data = await response.json(); // ✅ read actual data
+    console.log("Problem fetched:", data);
+
+    localStorage.setItem("current_problem_id", JSON.stringify(problemId));
+    return { success: true,problem: data }; // ✅ return usable data
+    
   } catch (error) {
     console.error("Error fetching problem:", error);
+    return { success: false, message: "Something went wrong" };
   }
 }
 
@@ -107,10 +134,10 @@ export async function runCodeAndEvaluateAPI({
   version = "default",
 }) {
   const token = localStorage.getItem("AUTH_TOKEN");
-
+console.log(problemId,code,language,version)
   try {
     const response = await axios.post(
-      `http://localhost:5000/api/submit/${problemId}`,
+      `${API_BASE}/runcode/${problemId}`,
       { code, language, version },
       {
         headers: {
@@ -148,13 +175,17 @@ export async function getProblemListAPI() {
       },
     });
 
-
     if (!response.ok) {
       console.error("API request failed with status", response.status);
       return { success: false, message: "Failed to fetch problems" };
     }
 
     const data = await response.json();
+    // ✅ Save problems to localStorage if fetch is successful
+    if (data.success && data.problems) {
+      localStorage.setItem("PROBLEM_LIST", JSON.stringify(data.problems));
+    }
+
     return data;
   } catch (err) {
     console.error("Error while fetching problems:", err.message);
@@ -163,7 +194,50 @@ export async function getProblemListAPI() {
 }
 
 
+//now i will make frontend api for submitting code 
 
+export async function submitcodeAPI({ problemId, code, language, version }) {
+  try {
+    const user = JSON.parse(localStorage.getItem("USER"));
+    const token = localStorage.getItem("AUTH_TOKEN");
+
+    if (!user || !user.user_id || !token) {
+      console.error("User not logged in or token not found");
+      return { success: false, message: "Authentication failed" };
+    }
+
+    const url = `${API_BASE}/submitcode/${problemId}/${user.user_id}`;
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        code,
+        language,
+        version,
+      }),
+    });
+
+    // Parse JSON for both success and error responses
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("API request failed with status", response.status);
+      // Return the parsed data (which contains the error message)
+      return data;
+    }
+    // ✅ Clear the problems cache on successful submission
+    localStorage.removeItem("PROBLEM_LIST");
+  
+    return data;
+  } catch (err) {
+    console.error("Error while submitting problem:", err.message);
+    return { success: false, message: "Something went wrong" };
+  }
+}
 
 
 

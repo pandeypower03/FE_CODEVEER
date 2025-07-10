@@ -3,7 +3,7 @@ import Login from '../components/Login.jsx';
 import Signup from '../components/Signup.jsx';
 import Dashboard from '../components/Dashboard.jsx';
 import AuthGaurd from '../components/AuthGaurd.jsx';
-import Solve from "../components/Solve.jsx";
+import New from "../components/New.jsx";
 import ProblemList from "../components/ProblemList.jsx";
 
 
@@ -29,8 +29,8 @@ const router = createBrowserRouter([
         element: <ProblemList />,
       },
       {
-        path: "/dashboard/solve/",
-        element: <Solve />,
+        path: "/dashboard/solve/:id",
+        element: <New />,
       },
     ],
   },
