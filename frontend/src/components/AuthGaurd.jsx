@@ -13,13 +13,13 @@ const AuthGaurd = () => {
     // const { user } = useContext(AuthContext);
     const navigate = useNavigate();
 
-    useEffect(()=>{
-        const { token, user } = checkLogin();
-        if(!token || !user){
-            navigate('/')
-        }
-    }
-    ),[]
+    useEffect(() => {
+      const { token, user } = checkLogin();
+      console.log("AuthGuard checkLogin:", { token, user }); // Add this debug
+      if (!token || !user) {
+        navigate("/");
+      }
+    }, []);
   return (
    <> 
    <Outlet />

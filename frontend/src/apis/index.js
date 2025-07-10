@@ -64,15 +64,20 @@ export function userLogout() {
 
 // 4️⃣ checkLogin returns the token (or null)
 export function checkLogin() {
-  const token   = localStorage.getItem(TOKEN_KEY);
-  const rawUser = localStorage.getItem('USER'); // make sure this matches exactly where you .setItem()
+  const token = localStorage.getItem(TOKEN_KEY);
+  const rawUser = localStorage.getItem("USER"); // make sure this matches exactly where you .setItem()
 
+  console.log("Raw localStorage data:", {
+    TOKEN_KEY,
+    token,
+    rawUser,
+  }); // ADD THIS
   let user = null;
   if (rawUser) {
     try {
       user = JSON.parse(rawUser);
     } catch (e) {
-      console.warn('Couldn’t parse USER from localStorage:', rawUser, e);
+      console.warn("Couldn’t parse USER from localStorage:", rawUser, e);
       // fallback: leave user === null
     }
   }

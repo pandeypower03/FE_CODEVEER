@@ -1,65 +1,90 @@
-
-import React, { useContext, useState ,useEffect} from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { AuthContext } from './AuthProvider.jsx';
 import { Link, useNavigate } from 'react-router-dom';
+
+import Button from "./reusablecomponents/Button";
+import InputField from "./reusablecomponents/InputField";
+import ImageContainer from "./reusablecomponents/ImageContainer";
+import LogoBar from "./reusablecomponents/LogoBar";
+
+import leftImage from "./Assets/images/leftimg.png";
+import rightImage from "./Assets/images/rightimg.png";
+import logoImage from "./Assets/images/logocodebeer.png";
+import instaIcon from "./Assets/images/instagram1.png";
+import profileIcon from "./Assets/images/profile.png";
+import emailIcon from "./Assets/images/send.png";
+import lockIcon from "./Assets/images/lock.png";
+
 
 
 export default function Login() {
   const [username, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const {user ,login, error} =useContext(AuthContext);
+  const { user, login, error } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    login({ username, email, password });
-  }
+    await login({ username, email, password });
+  };
 
-  useEffect(()=>{
-    if(user){
-      navigate('/dashboard/')
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard/');
     }
-  },[user,navigate])
-  
+  }, [user, navigate]);
 
   return (
-    <div className="auth-form">
-      <h2>Login</h2>
-      {error && <p className="error">{error}</p>}
-      <form onSubmit={handleSubmit}>
-         <label>
-          Username
-          <input 
-            type="username" 
-            value={username} 
-            onChange={e => setName(e.target.value)} 
-            required 
-          />
-        </label>
-        <label>
-          Email
-          <input 
-            type="email" 
-            value={email} 
-            onChange={e => setEmail(e.target.value)} 
-            required 
-          />
-        </label>
+    <div className="main-container flex px-[100px] py-[50px] bg-[#e3e3e3] font-[Poppins]">
+      <div className='inner-containe flex flex-col bg-[#f7f5f4] px-[30px] pt-0 pb-[70px] pl-[50px] w-full rounded-[30px] '>
+          <LogoBar logo={logoImage} instagram={instaIcon} />
+          <div className="login-sign flex flex-row justify-center items-center gap-[20px]">
+            <ImageContainer side="left" imgSrc={leftImage} />
 
-        <label>
-          Password
-          <input 
-            type="password" 
-            value={password} 
-            onChange={e => setPassword(e.target.value)} 
-            required 
-          />
-        </label>
-        <button type="submit">Log In</button>
-      </form>
-     <Link to ="/signup" className="link">
-        Don't have an account? Sign Up</Link>
+            <div className="form-box p-[30px_40px] w-[300px] flex flex-col gap-[15px] rounded-[20px] bg-[#fff]">
+              {error && <p className="text-red-600 text-sm">{error}</p>}
+              <div className="heading text-[30px] font-semibold capitalize font-[Poppins]">
+              Let's <br /> Start learning
+            </div>
+            <p className="request text-sm font-medium text-[#9b9b9b] font-[Poppins]">
+              Please Login or Signup to continue
+            </p>
+              <InputField
+                icon={profileIcon}
+                type="text"
+                placeholder="Username"
+                value={username}
+                onChange={(e) => setName(e.target.value)}
+              />
+
+              <InputField
+                icon={emailIcon}
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+
+              <InputField
+                icon={lockIcon}
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+
+              <Button label="Login" onClick={handleSubmit} />
+
+              <Link to="/signup" className="text-sm text-gray-600 mt-3 block text-center">
+                Don't have an account? Sign Up
+              </Link>
+            </div>
+          
+            <ImageContainer side="right" imgSrc={rightImage} />
+          </div>
+    </div>
+
     </div>
   );
 }
